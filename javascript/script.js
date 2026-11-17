@@ -29,13 +29,15 @@ function renderDots(){
 function updateCarousel(){
   visibleProjects.forEach((card,i)=>{card.style.display=i===currentIndex?'grid':'none'});
   if(currentEl) currentEl.textContent=String(currentIndex+1).padStart(2,'0');
-  if(prevBtn) prevBtn.disabled=currentIndex===0;
-  if(nextBtn) nextBtn.disabled=currentIndex===visibleProjects.length-1;
+  // Em um carrossel infinito, as duas setas permanecem sempre disponíveis.
+  if(prevBtn) prevBtn.disabled=visibleProjects.length<=1;
+  if(nextBtn) nextBtn.disabled=visibleProjects.length<=1;
   dots?.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===currentIndex));
 }
 function goTo(index){
   if(!visibleProjects.length)return;
-  currentIndex=Math.max(0,Math.min(index,visibleProjects.length-1));
+  // Faz a navegação circular: depois do último vem o primeiro e vice-versa.
+  currentIndex=((index%visibleProjects.length)+visibleProjects.length)%visibleProjects.length;
   updateCarousel();
 }
 function applyFilter(category){
@@ -84,10 +86,8 @@ const gameFrame = document.getElementById('mazeGameFrame');
 const gameClose = document.querySelector('.game-modal-close');
 
 function openGame() {
-  gameModal?.classList.add('show');
-  gameModal?.setAttribute('aria-hidden','false');
-  document.body.classList.add('modal-open');
-  setTimeout(() => gameFrame?.focus(), 100);
+  // Abre o jogo em uma nova aba e mantém o portfólio aberto.
+  window.open('jogos/maze-craze/index.html', '_blank', 'noopener,noreferrer');
 }
 function closeGame() {
   gameModal?.classList.remove('show');
